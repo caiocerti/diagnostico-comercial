@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Maturidade Comercial — Parque de Bioeconomia e Inovação da Amazônia</title>
+<style>
+  :root{
+    --ink:#14352a;
+    --ink-soft:#3d5c50;
+    --paper:#f6f5ef;
+    --card:#ffffff;
+    --line:#dcd9cc;
+    --acai:#5b2a5e;
+    --acai-soft:#f0e6f1;
+    --leaf:#2e7d5b;
+    --leaf-soft:#e3efe8;
+    --amber:#b07a1e;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important;animation:none!important} }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.5;
+    font-size:16px;
+  }
+  .serif{font-family:Georgia,'Iowan Old Style','Times New Roman',serif}
+
+  /* ---------- Header ---------- */
+  header.hero{
+    background:linear-gradient(150deg,#14352a 0%,#1d4a3a 70%,#245844 100%);
+    color:#f2f1e8; padding:56px 24px 48px;
+  }
+  .hero-inner{max-width:860px;margin:0 auto}
+  .eyebrow{
+    text-transform:uppercase; letter-spacing:.18em; font-size:.72rem; font-weight:600;
+    color:#a8c9b8; margin-bottom:14px;
+  }
+  h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.15;margin-bottom:16px}
+  h1 em{font-style:italic;color:#cfe6d9}
+  .hero p{max-width:620px;color:#d7e4dc;font-size:.98rem}
+  .hero-meta{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap}
+  .hero-meta div{font-size:.82rem;color:#a8c9b8}
+  .hero-meta strong{display:block;color:#f2f1e8;font-size:1.05rem;font-weight:600}
+
+  /* ---------- Sticky progress ---------- */
+  .progress-bar{
+    position:sticky;top:0;z-index:50;background:var(--card);
+    border-bottom:1px solid var(--line);
+    padding:10px 24px;
+  }
+  .progress-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:16px}
+  .track{flex:1;height:8px;background:#ece9de;border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--leaf),var(--acai));border-radius:99px;transition:width .3s ease}
+  .progress-label{font-size:.8rem;color:var(--ink-soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .progress-label b{color:var(--ink)}
+
+  /* ---------- Layout ---------- */
+  main{max-width:860px;margin:0 auto;padding:32px 24px 80px}
+
+  .intro-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 26px;margin-bottom:36px;
+  }
+  .intro-card h2{font-family:Georgia,serif;font-weight:400;font-size:1.15rem;margin-bottom:10px}
+  .scale-guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:16px}
+  .scale-item{background:var(--paper);border-radius:10px;padding:10px 12px;font-size:.78rem;color:var(--ink-soft)}
+  .scale-item b{display:block;font-size:1.05rem;color:var(--ink);margin-bottom:2px}
+  .id-fields{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+  @media(max-width:520px){.id-fields{grid-template-columns:1fr}}
+  .name-field{margin-top:18px}
+  .name-field label{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:600}
+  .name-field input{
+    display:block;width:100%;margin-top:6px;padding:12px 14px;font-size:1rem;
+    border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);
+    font-family:inherit;
+  }
+  .name-field input:focus{outline:2px solid var(--leaf);outline-offset:1px;border-color:var(--leaf)}
+
+  /* ---------- Pilares ---------- */
+  section.pilar{margin-bottom:44px}
+  .pilar-head{
+    display:flex;align-items:baseline;gap:14px;margin-bottom:6px;
+    border-bottom:2px solid var(--ink);padding-bottom:10px;
+  }
+  .pilar-num{
+    font-family:Georgia,serif;font-size:2rem;color:var(--acai);line-height:1;
+    min-width:44px;
+  }
+  .pilar-head h2{font-family:Georgia,serif;font-weight:400;font-size:1.35rem;flex:1}
+  .pilar-score{font-size:.8rem;color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .pilar-score b{color:var(--acai);font-size:1rem}
+  .pilar-desc{font-size:.87rem;color:var(--ink-soft);margin:10px 0 18px;max-width:640px}
+
+  .q{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;margin-bottom:12px;
+    transition:border-color .2s;
+  }
+  .q.answered{border-color:#bcd6c8}
+  .q-text{display:flex;gap:12px;margin-bottom:14px}
+  .q-num{
+    font-size:.75rem;font-weight:700;color:var(--acai);
+    background:var(--acai-soft);border-radius:99px;
+    min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+    font-variant-numeric:tabular-nums;flex-shrink:0;
+  }
+  .q-text p{font-size:.95rem;padding-top:3px}
+
+  .scale{display:flex;gap:6px}
+  .scale button{
+    flex:1;padding:10px 0;font-size:.95rem;font-weight:600;
+    border:1.5px solid var(--line);border-radius:10px;background:var(--paper);
+    color:var(--ink-soft);cursor:pointer;font-family:inherit;
+    transition:background .15s,border-color .15s,color .15s,transform .1s;
+  }
+  .scale button:hover{border-color:var(--leaf);color:var(--leaf)}
+  .scale button:focus-visible{outline:2px solid var(--acai);outline-offset:2px}
+  .scale button.sel{
+    background:var(--leaf);border-color:var(--leaf);color:#fff;transform:scale(1.04);
+  }
+  .scale button.sel.high{background:var(--acai);border-color:var(--acai)}
+  .scale button.na{flex:1.25;font-size:.78rem;color:#9a978a;letter-spacing:.02em;margin-right:8px}
+  .scale button.na:hover{border-color:#8a877a;color:#6f6c60}
+  .scale button.na.sel{background:#8a877a;border-color:#8a877a;color:#fff;transform:scale(1.04)}
+  .scale-hint{display:flex;gap:6px;font-size:.68rem;color:#9a978a;margin-top:6px}
+  .scale-hint .hint-spacer{flex:1.25;margin-right:8px}
+  .scale-hint .hint-range{flex:6;display:flex;justify-content:space-between;gap:8px;padding:0 2px}
+
+  /* ---------- Resultado ---------- */
+  #resultado{
+    background:var(--ink);color:#f2f1e8;border-radius:18px;
+    padding:36px 30px;margin-top:52px;
+  }
+  #resultado h2{font-family:Georgia,serif;font-weight:400;font-size:1.5rem;margin-bottom:4px}
+  #resultado .sub{color:#a8c9b8;font-size:.85rem;margin-bottom:26px}
+  .pending{color:#e8c882;font-size:.9rem;margin-bottom:8px}
+
+  .result-grid{display:grid;grid-template-columns:220px 1fr;gap:34px;align-items:start}
+  @media(max-width:680px){.result-grid{grid-template-columns:1fr}}
+
+  .gauge-wrap{text-align:center}
+  .igmc-num{font-family:Georgia,serif;font-size:3.6rem;line-height:1;color:#fff}
+  .igmc-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.16em;color:#a8c9b8;margin-top:4px}
+  .nivel-badge{
+    display:inline-block;margin-top:14px;padding:7px 18px;border-radius:99px;
+    font-size:.88rem;font-weight:700;background:var(--acai);color:#fff;
+  }
+  .nivel-desc{font-size:.82rem;color:#cfe0d6;margin-top:12px;line-height:1.45}
+
+  .bars{display:flex;flex-direction:column;gap:13px}
+  .bar-row{display:grid;grid-template-columns:150px 1fr 42px;gap:12px;align-items:center;font-size:.82rem}
+  @media(max-width:480px){.bar-row{grid-template-columns:110px 1fr 40px}}
+  .bar-track{height:10px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#3fa375,#8e5a91);width:0%;transition:width .5s ease}
+  .bar-val{font-variant-numeric:tabular-nums;text-align:right;color:#cfe0d6}
+
+  .radar-wrap{margin-top:30px;text-align:center}
+  .radar-wrap svg{max-width:460px;width:100%;height:auto;overflow:visible}
+
+  .actions{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+  .actions button{
+    padding:12px 22px;border-radius:10px;font-size:.9rem;font-weight:600;
+    border:1.5px solid #4a6a5c;background:transparent;color:#f2f1e8;cursor:pointer;font-family:inherit;
+    transition:background .15s;
+  }
+  .actions button:hover{background:rgba(255,255,255,.08)}
+  .actions button.primary{background:#f2f1e8;color:var(--ink);border-color:#f2f1e8}
+  .actions button.primary:hover{background:#fff}
+  .actions button:focus-visible{outline:2px solid var(--acai);outline-offset:2px}
+  .copy-ok{font-size:.8rem;color:#8fd4ae;margin-top:10px;min-height:1.2em}
+
+  footer{
+    max-width:860px;margin:0 auto;padding:0 24px 48px;
+    font-size:.75rem;color:#9a978a;
+  }
+
+  @media print{
+    .progress-bar,.actions,.scale-hint{display:none}
+    header.hero{padding:24px}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Parque de Bioeconomia e Inovação da Amazônia</div>
+    <h1>Diagnóstico de Maturidade Comercial <em>para startups</em></h1>
+    <p>Responda com sinceridade sobre como as coisas funcionam hoje na sua startup. Não existe resposta certa ou errada — o objetivo é entender em que estágio comercial vocês estão e quais apoios do Parque fazem mais sentido agora.</p>
+    <div class="hero-meta">
+      <div><strong id="heroTot">51</strong>perguntas</div>
+      <div><strong>6</strong>pilares</div>
+      <div><strong>~30 min</strong>tempo estimado</div>
+    </div>
+  </div>
+</header>
+
+<div class="progress-bar">
+  <div class="progress-inner">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="progress-label"><b id="nAns">0</b>/<span id="nTot">51</span> respondidas · IGMC parcial: <b id="igmcLive">—</b></div>
+  </div>
+</div>
+
+<main>
+  <div class="intro-card">
+    <h2 class="serif">Como responder</h2>
+    <p style="font-size:.9rem;color:var(--ink-soft)">Para cada pergunta, escolha a nota que melhor descreve a realidade atual:</p>
+    <div class="scale-guide">
+      <div class="scale-item"><b>N/A</b>Não se aplica ao nosso negócio — fica fora do cálculo</div>
+      <div class="scale-item"><b>0</b>Não fazemos / não sabemos</div>
+      <div class="scale-item"><b>1</b>Fazemos de vez em quando, sem método</div>
+      <div class="scale-item"><b>2</b>Fazemos, mas de forma incompleta</div>
+      <div class="scale-item"><b>3</b>Fazemos com regularidade e método</div>
+      <div class="scale-item"><b>4</b>Fazemos bem e usamos nas decisões</div>
+      <div class="scale-item"><b>5</b>Fazemos muito bem — somos referência</div>
+      <div class="scale-item"><b>N/A</b>Não se aplica ao nosso negócio — fica fora do cálculo</div>
+    </div>
+    <div class="id-fields">
+      <div class="name-field">
+        <label for="startupName">Nome da startup</label>
+        <input type="text" id="startupName" placeholder="Ex.: Amazônia Bioativos Ltda." autocomplete="organization">
+      </div>
+      <div class="name-field">
+        <label for="anosOperacao">Anos de operação</label>
+        <input type="number" id="anosOperacao" min="0" max="99" step="1" inputmode="numeric" placeholder="Ex.: 3">
+      </div>
+    </div>
+  </div>
+
+  <div id="pilares"></div>
+
+  <section id="resultado" aria-live="polite">
+    <h2>Resultado</h2>
+    <div class="sub">Índice Geral de Maturidade Comercial (IGMC) e perfil por pilar</div>
+    <div class="pending" id="pendingMsg"></div>
+    <div class="result-grid">
+      <div class="gauge-wrap">
+        <div class="igmc-num" id="igmcBig">—</div>
+        <div class="igmc-label">IGMC (0–100)</div>
+        <div class="nivel-badge" id="nivelBadge" style="display:none"></div>
+        <div class="nivel-desc" id="nivelDesc"></div>
+      </div>
+      <div>
+        <div class="bars" id="bars"></div>
+        <div class="radar-wrap" id="radarWrap"></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="btnSend">Enviar respostas ao Parque</button>
+      <button id="btnCopy">Copiar resumo</button>
+      <button id="btnCSV">Baixar respostas (CSV)</button>
+      <button id="btnPrint">Imprimir / salvar PDF</button>
+      <button id="btnReset">Limpar respostas</button>
+    </div>
+    <div class="copy-ok" id="copyOk"></div>
+    <pre id="resumoOut" style="display:none;white-space:pre-wrap;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:14px;font-size:.78rem;color:#e8ede9;margin-top:10px;user-select:all"></pre>
+  </section>
+</main>
+
+<footer>
+  Diagnóstico de Maturidade Comercial — versão startups · Parque de Bioeconomia e Inovação da Amazônia · Porto do Bem, Belém (PA).
+  As respostas ficam neste navegador durante a sessão; são transmitidas ao Parque apenas quando você clica em “Enviar respostas” (se o envio estiver configurado) ou nos arquivos que você exportar.
+</footer>
+
+<script>
+// ============================================================
+// ENVIO DAS RESPOSTAS PARA PLANILHA (Google Apps Script)
+// Cole abaixo, entre as aspas, a URL do app da web gerada na
+// implantação do Apps Script (instruções no arquivo .gs).
+// Deixe vazio para desativar o botão de envio.
+// ============================================================
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbxlzJCo31CCuWR6NYIbPhHN2deqlpS3usgjun2hUY4V-WH3E_tYuv3adHlNYG074MGeCQ/exec";
+
+const PILARES = [
+  {
+    nome:"Mercado e Cliente",
+    desc:"Quem é o nosso cliente, o que ele precisa e como o escutamos.",
+    qs:[
+      "Sabemos descrever com clareza quem é o cliente ideal do nosso produto (quem compra, por que compra, quanto paga)?",
+      "Temos uma estimativa do tamanho do mercado que queremos atingir (tamanho do mercado total e endereçável, quantos clientes potenciais existem, entre outros)?",
+      "Conhecemos a frequência de compra, o desembolso médio e a penetração do nosso produto ou categoria nos mercados em que atuamos ou vamos atuar?",
+      "Conhecemos nossos principais concorrentes e sabemos em que somos melhores ou piores do que eles, segundo o ponto de vista do cliente?",
+      "Sabemos quais são as tendências e as marcas que mais crescem na nossa categoria — e por quê?",
+      "Conversamos com clientes de forma regular para entender o que eles precisam e o que os incomoda?",
+      "Testamos o produto com clientes reais antes de lançar (degustações, amostras, testes de uso)?",
+      "Acompanhamos o que os clientes falam sobre a marca e o produto (redes sociais, avaliações, boca a boca)?",
+      "Medimos a satisfação dos clientes de alguma forma (pesquisa, nota, recompra)?",
+      "Quando um cliente deixa de comprar, procuramos entender o motivo?"
+    ]
+  },
+  {
+    nome:"Vendas e Estrutura Comercial",
+    desc:"Como encontramos clientes, fechamos vendas e fazemos gestão ativa de metas e canais.",
+    qs:[
+      "Conseguimos explicar em uma frase por que um cliente deveria comprar de nós?",
+      "Já analisamos em detalhe quais canais de venda e mercados têm maior oportunidade de crescimento e qual é a margem de contribuição (rentabilidade) de cada canal?",
+      "Existe uma pessoa responsável por cada canal de venda, mesmo que acumule outras funções?",
+      "Temos uma rotina de vendas definida — como encontramos, abordamos e fechamos com novos clientes?",
+      "Registramos os contatos e negociações em andamento em algum lugar (planilha, caderno, aplicativo, CRM)?",
+      "Temos metas de faturamento claras por canal e por mercado?",
+      {t:"Com que frequência acompanhamos as vendas em relação à meta?",
+       hintL:"0 não acompanhamos · 1 raramente · 2 mensal", hintR:"3 quinzenal · 4 semanal · 5 diária"},
+      "Quando a meta não está sendo atingida, elaboramos um plano de ação no mês/período para buscá-la?",
+      "Sabemos quanto do valor final do produto fica com cada elo da cadeia — produtor ou comunidade, indústria, distribuidor, varejo (markup por elo)?"
+    ]
+  },
+  {
+    nome:"Preço",
+    desc:"Como o preço é definido, comparado e revisado.",
+    qs:[
+      "Sabemos quanto custa produzir cada unidade do nosso produto (matéria-prima, embalagem, frete, mão de obra)?",
+      "O preço de venda foi definido com base em cálculo, e não só \u201Cno olho\u201D ou copiando o concorrente?",
+      "Comparamos o nosso preço em R$/kg, R$/unidade ou R$/serviço com o dos concorrentes, numa régua de preços do mais barato ao mais caro?",
+      "O nosso preço tem desconto ou prêmio em relação aos concorrentes? Sabemos se essa diferença se justifica do ponto de vista do cliente?",
+      "Cobramos preços diferentes conforme o canal (varejo, atacado, venda direta, B2B)?",
+      "Temos uma regra clara para dar desconto (quando, quanto e para quem)?",
+      "Já testamos aumentar ou baixar o preço para ver o efeito nas vendas?",
+      "Revisamos os preços quando os custos sobem (safra, frete, insumos)?",
+      "Sabemos quais produtos dão mais lucro e quais dão menos?"
+    ]
+  },
+  {
+    nome:"Marca e História",
+    desc:"O que a marca representa e como a origem amazônica aparece na comunicação.",
+    qs:[
+      "Temos clareza da razão de ser da marca — por que a empresa existe, além de vender — e ela ressoa com clientes e parceiros?",
+      "A marca defende propósitos ou causas justas diretamente ligadas às atividades principais do negócio (e não só ao discurso)?",
+      "A origem amazônica e a história do produto — de onde vem a matéria-prima, quem produz, como chega ao cliente — aparecem de forma clara na nossa comunicação?",
+      "O posicionamento da nossa marca é distintivo na categoria — os clientes nos percebem como diferentes dos concorrentes?",
+      "Na visão dos clientes, a nossa oferta ou produto é melhor do que o líder do mercado ou referência da categoria?",
+      "Já definimos os atributos da marca — o que ela entrega (funcional), o que desperta (emocional) e no que acredita (filosófico)?",
+      "Já definimos um arquétipo para a marca — a personalidade que guia o tom e o estilo (ex.: exploradora, cuidadora, sábia)?",
+      "O visual da marca (logo, cores, embalagem, redes sociais) é consistente — parece sempre a mesma empresa?",
+      "Temos um brandbook atualizado — o documento que reúne logo, cores, tipografia, tom de voz e regras de uso da marca?",
+      "Temos materiais básicos de apresentação prontos (apresentação da empresa, fotos boas do produto, texto sobre a história)?",
+      "O nome e a identidade da marca estão registrados ou em processo de registro (INPI)?",
+      "Os clientes reconhecem e lembram da nossa marca (pedem pelo nome, indicam para outros)?",
+      "Sabemos o quanto os clientes atuais recomendariam nosso produto ou serviço (indicação espontânea, NPS)?"
+    ]
+  },
+  {
+    nome:"Presença Digital",
+    desc:"Estratégia, canais, relacionamento com clientes e métricas do digital.",
+    qs:[
+      "Temos uma estratégia de marketing digital definida — e ela gera resultado de verdade (clientes, vendas)?",
+      "Temos presença digital ativa (Instagram, site, WhatsApp Business) com informações atualizadas?",
+      "Atuamos em mais de um canal digital — sem depender de um único (por exemplo, só do Instagram)?",
+      "É fácil um cliente novo nos encontrar pesquisando no Google ou nas redes sociais?",
+      "Publicamos conteúdo com alguma frequência planejada (não só quando dá tempo)?",
+      "Temos uma estratégia de construção de comunidade — influenciadores, embaixadores, clientes que divulgam a marca — e ela funciona?",
+      "Vendemos pela internet (site próprio, marketplace, WhatsApp) ou sabemos o que falta para começar?",
+      "Respondemos clientes no digital com agilidade (mesmo dia)?",
+      "Temos regras definidas de relacionamento com o cliente em diferentes momentos — boas-vindas, pós-venda, recompra, reativação (régua de CRM) — funcionando na prática?",
+      "Segmentamos os clientes (por perfil, frequência ou valor de compra) para vender mais para quem já compra (recorrência)?",
+      "Monitoramos indicadores como fluxo de visitas, taxa de conversão, ticket médio e recorrência — e sabemos quais canais trazem mais clientes?",
+      "Sabemos se a nossa performance de vendas digitais está acima ou abaixo da de concorrentes diretos?",
+      "Sabemos quanto custa conquistar cada cliente novo (CAC — custo de aquisição de clientes)?",
+      "Sabemos quanto um cliente gasta conosco ao longo do tempo de relacionamento (LTV)?"
+    ]
+  },
+  {
+    nome:"Acesso a Mercados, Requisitos e Impacto",
+    desc:"Registros, certificações, rastreabilidade, impacto socioambiental e prontidão para crescer.",
+    qs:[
+      "O nosso produto tem os registros e licenças necessários para ser vendido (ANVISA, MAPA, vigilância sanitária, conforme o caso)?",
+      "Sabemos quais certificações poderiam valorizar o produto (orgânico, Fair Trade, vegano, origem) e o que falta para obtê-las?",
+      "Conseguimos comprovar de onde vem a matéria-prima e quem são os fornecedores (rastreabilidade)?",
+      "A relação com as comunidades ou produtores fornecedores está formalizada de alguma forma (acordo, contrato, repartição de benefícios)?",
+      "Temos clareza de quais impactos socioambientais o negócio gera (renda para comunidades, floresta em pé, conservação) e de como as atividades levam a esses resultados?",
+      "Medimos esses impactos com indicadores concretos (famílias beneficiadas, renda gerada, hectares conservados, volume comprado da sociobiodiversidade)?",
+      "Comunicamos os impactos com dados e evidências verificáveis (relatórios, números, histórias documentadas) para clientes, parceiros e investidores?",
+      "Temos rótulo e embalagem adequados às exigências legais (tabela nutricional, validade, lote, composição)?",
+      "Já participamos de feiras, rodadas de negócio ou eventos do setor para apresentar o produto?",
+      "Já vendemos ou já fomos procurados por compradores de fora do estado ou do país?",
+      "Se surgisse hoje um pedido grande (10× o volume atual), sabemos o que precisaríamos para atender?"
+    ]
+  }
+];
+
+const NIVEIS = [
+  {min:0, max:20, nome:"Discovery", desc:"O negócio ainda está descobrindo seu cliente e seu modelo de venda. Foco sugerido: validação com clientes reais e apoio de incubação."},
+  {min:21,max:40, nome:"Validation", desc:"O produto já foi validado por clientes reais; a estrutura comercial está começando. Foco sugerido: rotina de vendas, precificação e presença digital."},
+  {min:41,max:60, nome:"Traction", desc:"Há rotina comercial e primeiros sinais de crescimento consistente. Foco sugerido: canais, metas e preparação para escala."},
+  {min:61,max:80, nome:"Scale", desc:"A operação comercial está madura e pronta para expandir. Foco sugerido: novos mercados, certificações e capital."},
+  {min:81,max:100,nome:"Global Readiness", desc:"A startup está preparada para competir em mercados nacionais e internacionais."}
+];
+
+const TOTAL = PILARES.reduce((a,p)=>a+p.qs.length,0);
+const OFFSETS = [];
+{ let o=0; PILARES.forEach(p=>{ OFFSETS.push(o); o+=p.qs.length; }); }
+const answers = new Array(TOTAL).fill(null);
+document.getElementById('nTot').textContent = TOTAL;
+document.getElementById('heroTot').textContent = TOTAL;
+
+// ---------- Render ----------
+const pilaresEl = document.getElementById('pilares');
+let qIndex = 0;
+PILARES.forEach((p, pi) => {
+  const sec = document.createElement('section');
+  sec.className = 'pilar';
+  sec.innerHTML = `
+    <div class="pilar-head">
+      <div class="pilar-num serif">${pi+1}</div>
+      <h2>${p.nome}</h2>
+      <div class="pilar-score">média <b id="pscore-${pi}">—</b> / 5</div>
+    </div>
+    <p class="pilar-desc">${p.desc}</p>
+  `;
+  p.qs.forEach(q => {
+    const idx = qIndex++;
+    const texto = typeof q === 'string' ? q : q.t;
+    const hintL = typeof q === 'string' ? 'não fazemos / não sabemos' : q.hintL;
+    const hintR = typeof q === 'string' ? 'referência' : q.hintR;
+    const card = document.createElement('div');
+    card.className = 'q';
+    card.id = 'q-'+idx;
+    let btns = `<button type="button" class="na" data-q="${idx}" data-v="NA" aria-label="Pergunta ${idx+1}, não se aplica">N/A</button>`;
+    for(let v=0; v<=5; v++){
+      btns += `<button type="button" data-q="${idx}" data-v="${v}" aria-label="Pergunta ${idx+1}, nota ${v}">${v}</button>`;
+    }
+    card.innerHTML = `
+      <div class="q-text"><span class="q-num">${idx+1}</span><p>${texto}</p></div>
+      <div class="scale" role="group" aria-label="Escala de 0 a 5">${btns}</div>
+      <div class="scale-hint"><span class="hint-spacer"></span><span class="hint-range"><span>${hintL}</span><span>${hintR}</span></span></div>
+    `;
+    sec.appendChild(card);
+  });
+  pilaresEl.appendChild(sec);
+});
+
+// ---------- Interação ----------
+pilaresEl.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-q]');
+  if(!btn) return;
+  const q = +btn.dataset.q;
+  const v = btn.dataset.v === 'NA' ? 'NA' : +btn.dataset.v;
+  answers[q] = v;
+  const card = document.getElementById('q-'+q);
+  card.classList.add('answered');
+  card.querySelectorAll('button').forEach(b => {
+    b.classList.remove('sel','high');
+    if(b.dataset.v === btn.dataset.v){
+      b.classList.add('sel');
+      if(v !== 'NA' && v >= 4) b.classList.add('high');
+    }
+  });
+  update();
+});
+
+// ---------- Cálculo e atualização ----------
+function pilarStats(pi){
+  const slice = answers.slice(OFFSETS[pi], OFFSETS[pi] + PILARES[pi].qs.length);
+  const valid = slice.filter(a => a !== null && a !== 'NA');
+  const na = slice.filter(a => a === 'NA').length;
+  const n = slice.filter(a => a !== null).length;
+  if(valid.length === 0) return {media:null, n, na};
+  return {media: valid.reduce((a,b)=>a+b,0)/valid.length, n, na};
+}
+
+function update(){
+  const n = answers.filter(a=>a!==null).length;
+  document.getElementById('nAns').textContent = n;
+  document.getElementById('fill').style.width = (n/TOTAL*100)+'%';
+
+  // médias por pilar
+  const medias = [];
+  for(let pi=0; pi<PILARES.length; pi++){
+    const s = pilarStats(pi);
+    medias.push(s.media);
+    const el = document.getElementById('pscore-'+pi);
+    el.textContent = s.media!==null ? s.media.toFixed(1) : (s.n>0 && s.n===s.na ? 'N/A' : '—');
+  }
+
+  // IGMC parcial (sobre respondidas válidas, excluindo N/A)
+  const validas = answers.filter(a=>a!==null && a!=='NA');
+  const igmcParcial = validas.length ? (validas.reduce((a,b)=>a+b,0)/(validas.length*5)*100) : null;
+  document.getElementById('igmcLive').textContent = igmcParcial===null ? '—' : Math.round(igmcParcial);
+
+  renderResultado(n, medias);
+}
+
+function renderResultado(n, medias){
+  const pend = document.getElementById('pendingMsg');
+  const badge = document.getElementById('nivelBadge');
+  const big = document.getElementById('igmcBig');
+  const nivelDesc = document.getElementById('nivelDesc');
+
+  if(n < TOTAL){
+    pend.textContent = `Faltam ${TOTAL-n} pergunta${TOTAL-n>1?'s':''} para o resultado final. O valor abaixo é parcial, calculado só sobre o que já foi respondido (perguntas N/A ficam fora do cálculo).`;
+  } else {
+    pend.textContent = '';
+  }
+
+  const validas = answers.filter(a=>a!==null && a!=='NA');
+  if(validas.length === 0){
+    big.textContent = '—';
+    badge.style.display = 'none';
+    nivelDesc.textContent = '';
+  } else {
+    const igmc = validas.reduce((a,b)=>a+b,0)/(validas.length*5)*100;
+    big.textContent = Math.round(igmc);
+    if(n === TOTAL){
+      const nivel = NIVEIS.find(nv => Math.round(igmc) >= nv.min && Math.round(igmc) <= nv.max) || NIVEIS[NIVEIS.length-1];
+      badge.textContent = nivel.nome;
+      badge.style.display = 'inline-block';
+      nivelDesc.textContent = nivel.desc;
+    } else {
+      badge.style.display = 'none';
+      nivelDesc.textContent = '';
+    }
+  }
+
+  // barras
+  const bars = document.getElementById('bars');
+  bars.innerHTML = '';
+  PILARES.forEach((p,pi)=>{
+    const m = medias[pi];
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = `
+      <span>${p.nome}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${m===null?0:(m/5*100)}%"></div></div>
+      <span class="bar-val">${m===null?'—':m.toFixed(1)}</span>
+    `;
+    bars.appendChild(row);
+  });
+
+  renderRadar(medias);
+}
+
+// ---------- Radar SVG ----------
+function renderRadar(medias){
+  const wrap = document.getElementById('radarWrap');
+  if(medias.every(m=>m===null)){ wrap.innerHTML=''; return; }
+  const cx=230, cy=205, R=112, N=6;
+  const labels = [["Mercado e","Cliente"],["Estrutura","Comercial"],["Preço"],["Marca e","História"],["Presença","Digital"],["Acesso e","Impacto"]];
+  function pt(i, frac){
+    const ang = -Math.PI/2 + i*(2*Math.PI/N);
+    return [cx + Math.cos(ang)*R*frac, cy + Math.sin(ang)*R*frac];
+  }
+  let grid='';
+  for(let ring=1; ring<=5; ring++){
+    const pts = Array.from({length:N},(_,i)=>pt(i,ring/5).map(v=>v.toFixed(1)).join(',')).join(' ');
+    grid += `<polygon points="${pts}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;
+  }
+  let axes='';
+  for(let i=0;i<N;i++){
+    const [x,y]=pt(i,1);
+    axes += `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;
+    let [lx,ly]=pt(i,1.18);
+    const anchor = Math.abs(lx-cx)<12 ? 'middle' : (lx>cx?'start':'end');
+    // afastar verticalmente os rótulos de topo e base do gráfico
+    if(ly < cy-R) ly -= 14;
+    if(ly > cy+R) ly += 8;
+    const lines = labels[i];
+    const val = medias[i]===null ? '' : medias[i].toFixed(1);
+    let tspans = lines.map((ln,k)=>`<tspan x="${lx.toFixed(1)}" dy="${k===0?0:14}">${ln}</tspan>`).join('');
+    if(val) tspans += `<tspan x="${lx.toFixed(1)}" dy="15" font-size="12" font-weight="700" fill="#c99ecb">${val}</tspan>`;
+    axes += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" font-size="12.5" font-weight="600" fill="#f2f1e8" dominant-baseline="middle">${tspans}</text>`;
+  }
+  const dataPts = medias.map((m,i)=>pt(i,(m===null?0:m)/5));
+  const poly = dataPts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ');
+  let dots = dataPts.map((p,i)=> medias[i]===null?'':`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="#e9d3ec" stroke="#8e5a91" stroke-width="1.5"/>`).join('');
+  wrap.innerHTML = `
+    <svg viewBox="0 0 460 430" role="img" aria-label="Radar de maturidade por pilar">
+      ${grid}${axes}
+      <polygon points="${poly}" fill="rgba(142,90,145,.38)" stroke="#c99ecb" stroke-width="2"/>
+      ${dots}
+    </svg>`;
+}
+
+// ---------- Ações ----------
+function resumoTexto(){
+  const nome = document.getElementById('startupName').value.trim() || '(startup não identificada)';
+  const respondidas = answers.filter(a=>a!==null);
+  const validas = answers.filter(a=>a!==null && a!=='NA');
+  const nNA = respondidas.length - validas.length;
+  const total = validas.reduce((a,b)=>a+b,0);
+  const igmc = validas.length ? Math.round(total/(validas.length*5)*100) : 0;
+  const completo = respondidas.length===TOTAL;
+  let nivel='—';
+  if(completo && validas.length){
+    const nv = NIVEIS.find(nv => igmc>=nv.min && igmc<=nv.max);
+    nivel = nv ? nv.nome : '—';
+  }
+  const anos = document.getElementById('anosOperacao').value.trim();
+  let txt = `DIAGNÓSTICO DE MATURIDADE COMERCIAL — PARQUE DE BIOECONOMIA E INOVAÇÃO DA AMAZÔNIA\n`;
+  txt += `Startup: ${nome}\nAnos de operação: ${anos || '—'}\nData: ${new Date().toLocaleDateString('pt-BR')}\n`;
+  txt += `Perguntas respondidas: ${respondidas.length}/${TOTAL} (${nNA} marcadas como N/A)\n`;
+  txt += `Pontuação: ${total}/${validas.length*5} (sobre ${validas.length} perguntas válidas)\n`;
+  txt += `IGMC${completo?'':' (parcial)'}: ${igmc}\nNível: ${nivel}\n\nMédias por pilar (0–5, excluindo N/A):\n`;
+  PILARES.forEach((p,pi)=>{
+    const s = pilarStats(pi);
+    const nq = PILARES[pi].qs.length;
+    txt += `  ${pi+1}. ${p.nome}: ${s.media===null?'—':s.media.toFixed(1)} (${s.n}/${nq} respondidas${s.na?`, ${s.na} N/A`:''})\n`;
+  });
+  return txt;
+}
+
+let enviado = false;
+document.getElementById('btnSend').addEventListener('click', async (e)=>{
+  const btn = e.currentTarget;
+  const ok = document.getElementById('copyOk');
+  const show = (m,t=7000)=>{ ok.textContent=m; setTimeout(()=>{ if(ok.textContent===m) ok.textContent=''; }, t); };
+
+  if(!ENDPOINT){
+    show('Envio online não configurado nesta versão — use "Copiar resumo" ou "Baixar respostas (CSV)" e mande ao Parque.');
+    return;
+  }
+  if(enviado){ show('Estas respostas já foram enviadas.'); return; }
+  const n = answers.filter(a=>a!==null).length;
+  if(n < TOTAL){ show(`Responda todas as perguntas antes de enviar — faltam ${TOTAL-n}.`); return; }
+  const nome = document.getElementById('startupName').value.trim();
+  if(!nome){ show('Preencha o nome da startup antes de enviar.'); document.getElementById('startupName').focus(); return; }
+
+  const validas = answers.filter(a=>a!=='NA');
+  const igmc = Math.round(validas.reduce((a,b)=>a+b,0)/(validas.length*5)*100);
+  const nivel = (NIVEIS.find(nv => igmc>=nv.min && igmc<=nv.max)||{}).nome || '';
+  const payload = {
+    ts: new Date().toISOString(),
+    startup: nome,
+    anosOperacao: document.getElementById('anosOperacao').value.trim(),
+    total: TOTAL,
+    respondidas: n,
+    na: answers.filter(a=>a==='NA').length,
+    igmc, nivel,
+    mediasPilares: PILARES.map((p,pi)=>{ const st=pilarStats(pi); return st.media===null?null:+st.media.toFixed(2); }),
+    nomesPilares: PILARES.map(p=>p.nome),
+    respostas: answers.slice()
+  };
+
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  let sucesso = false;
+  try{
+    await fetch(ENDPOINT, { method:'POST', body: JSON.stringify(payload) });
+    sucesso = true;
+  }catch(err){
+    try{
+      await fetch(ENDPOINT, { method:'POST', mode:'no-cors', body: JSON.stringify(payload) });
+      sucesso = true;
+    }catch(err2){ sucesso = false; }
+  }
+  if(sucesso){
+    enviado = true;
+    btn.textContent = 'Respostas enviadas ✓';
+    show('Respostas enviadas ao Parque. Obrigado!');
+  } else {
+    btn.disabled = false; btn.textContent = 'Enviar respostas ao Parque';
+    show('Não foi possível enviar (sem internet ou bloqueio do navegador). Use o CSV como alternativa.');
+  }
+});
+
+document.getElementById('btnCopy').addEventListener('click', async ()=>{
+  const ok = document.getElementById('copyOk');
+  const txt = resumoTexto();
+  let copiado = false;
+  try{
+    await navigator.clipboard.writeText(txt);
+    copiado = true;
+  }catch(e){
+    // fallback para ambientes sem clipboard API (iframes restritos, http)
+    try{
+      const ta = document.createElement('textarea');
+      ta.value = txt;
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      copiado = document.execCommand('copy');
+      document.body.removeChild(ta);
+    }catch(e2){ copiado = false; }
+  }
+  const out = document.getElementById('resumoOut');
+  if(copiado){
+    ok.textContent = 'Resumo copiado para a área de transferência.';
+    out.style.display = 'none';
+  } else {
+    ok.textContent = 'Cópia automática bloqueada neste ambiente — selecione e copie o texto abaixo:';
+    out.textContent = txt;
+    out.style.display = 'block';
+  }
+  setTimeout(()=>{ ok.textContent=''; }, 6000);
+});
+
+document.getElementById('btnCSV').addEventListener('click', ()=>{
+  const ok = document.getElementById('copyOk');
+  try{
+    const nome = document.getElementById('startupName').value.trim() || 'startup';
+    const anos = document.getElementById('anosOperacao').value.trim();
+    let csv = 'pilar;numero;pergunta;nota\n';
+    csv += `"identificação";;"Nome da startup";"${nome.replace(/"/g,'""')}"\n`;
+    csv += `"identificação";;"Anos de operação";${anos||''}\n`;
+    let idx=0;
+    PILARES.forEach(p=>{
+      p.qs.forEach(q=>{
+        const texto = typeof q === 'string' ? q : q.t;
+        csv += `"${p.nome}";${idx+1};"${texto.replace(/"/g,'""')}";${answers[idx]===null?'':answers[idx]}\n`;
+        idx++;
+      });
+    });
+    csv += `\n"IGMC (excluindo N/A)";;;${(()=>{const v=answers.filter(a=>a!==null&&a!=='NA');return v.length?Math.round(v.reduce((a,b)=>a+b,0)/(v.length*5)*100):''})()}\n`;
+    const blob = new Blob(["\uFEFF"+csv], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `CMD_${nome.replace(/[^\p{L}\p{N}]+/gu,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+    ok.textContent = 'CSV gerado — verifique a pasta de downloads.';
+  }catch(e){
+    ok.textContent = 'Download bloqueado neste ambiente — use "Copiar resumo" ou abra o arquivo em um navegador.';
+  }
+  setTimeout(()=>{ ok.textContent=''; }, 6000);
+});
+
+document.getElementById('btnPrint').addEventListener('click', ()=>{
+  try{ window.print(); }
+  catch(e){
+    const ok = document.getElementById('copyOk');
+    ok.textContent = 'Impressão bloqueada neste ambiente — abra o arquivo em um navegador para imprimir.';
+    setTimeout(()=>{ ok.textContent=''; }, 6000);
+  }
+});
+
+// limpeza em duas etapas (sem depender de confirm(), que pode ser bloqueado)
+let resetArmado = null;
+document.getElementById('btnReset').addEventListener('click', (e)=>{
+  const btn = e.currentTarget;
+  if(resetArmado){
+    clearTimeout(resetArmado); resetArmado = null;
+    answers.fill(null);
+    document.querySelectorAll('.q').forEach(c=>{
+      c.classList.remove('answered');
+      c.querySelectorAll('button').forEach(b=>b.classList.remove('sel','high'));
+    });
+    document.getElementById('resumoOut').style.display='none';
+    btn.textContent = 'Limpar respostas';
+    update();
+  } else {
+    btn.textContent = 'Confirmar limpeza?';
+    resetArmado = setTimeout(()=>{ btn.textContent='Limpar respostas'; resetArmado=null; }, 4000);
+  }
+});
+
+update();
+</script>
+</body>
+</html>
